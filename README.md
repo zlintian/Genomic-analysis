@@ -14,13 +14,14 @@ Always check with me before you use the imputed data to make sure I have updated
 
 
 ########################Genotype preparation workflow###############
+
 The following steps should fit most SNP data, but there can be special situations come up.
 
 0. define sample list and remove duplicates. Ask: Is this a family based study? Any related individuals? Is it a case control study?
 1. recode to ATGC if original data was coded with 1234
 2. liftover to build 37 if in build 36 (this step can be omited because it can be done with the flip step, step6.
 3. get the subset of data of selected individuals
-4. pick the subset of chr1~23 if in original has 1~26. Only 1~23 can be imputed.
+4. pick the subset of chr1-23 if in original has 1-26. Only 1-23 can be imputed.
 5. quality control. Parameter can be different.
 6. flip the minus strand based on the strand information. Define which chip is the data from first.
 7. convert the SNPs identifiers if a lot of non rs IDs exist.
