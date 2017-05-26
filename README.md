@@ -240,7 +240,8 @@ LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 
 :) Thanks to Yang.
 
-########################look into the QLD_MND genotype data carefully##
+########################look into the QLD_MND genotype data carefully####################
+
 ? SNPs in the bim file.
 ? individuals in the genotype data est. (belong to 666 families)
 ? individuals in the methylation data set.
@@ -350,7 +351,8 @@ where:
 
 :) Thanks to Sonia.
 
-########################Convert the kgp SNP identifiers##############
+########################Convert the kgp SNP identifiers##################
+
 #do this step in local PC.
 #don't convert the kgp numbers to rs numbers before flip, because the strand file use the same identifiers as the original data.
 
