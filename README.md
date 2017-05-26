@@ -20,7 +20,7 @@ Always check with me before you use the imputed data to make sure I have updated
 
 ########################Genotype preparation workflow###############
 
-The following steps should fit most SNP data, but there can be special situations come up.
+The following steps should fit most SNP data, but there can be special situations come up. 
 
 0. define sample list and remove duplicates. Ask: Is this a family based study? Any related individuals? Is it a case control study?
 1. recode to ATGC if original data was coded with 1234
@@ -41,7 +41,7 @@ The following steps should fit most SNP data, but there can be special situation
 
 ########################Quick search of Core Codes##################
 
-ssh ????@delta.imb.uq.edu.au
+ssh username@delta.imb.uq.edu.au
 
 cd /shares/compbio/PCTG/methylation/mQTL_project/#_cohort/COHORT_genotype
 
@@ -235,22 +235,22 @@ LBCW1_recoded_lifted.bed file is in BED format, we don't need it either. change 
 
 LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 
-? SNPs in the unlifted file. All of them are shown as #Deleted in new?
+how many SNPs in the unlifted file? All of them are shown as #Deleted in new?
 
 
 :) Thanks to Yang.
 
 ########################look into the QLD_MND genotype data carefully####################
 
-? SNPs in the bim file.
-? individuals in the genotype data est. (belong to 666 families)
-? individuals in the methylation data set.
-? individuals in the information sheet
+how many SNPs in the bim file.
+how many individuals in the genotype data est. (belong to 666 families)
+how many individuals in the methylation data set.
+how many individuals in the information sheet
 
 #are genotype data overlap with methylation data set?
-? of them are overlapped.
-? extra in methylation data set
-? extra in genotyped data set.
+how many of them are overlapped.
+how many extra in methylation data set
+how many extra in genotyped data set.
 
 awk '{print $1}' COHORT_subset.bim | uniq -c 
 
@@ -275,16 +275,16 @@ Determine what samples to keep based on the methylation data.
 ./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
 
 #make a record of variables and samples removed and kept.
-? people input
-? SNPs input
+how many people input
+how many SNPs input
 
-? people removed
-? SNPs removed as missing
-? SNPs removed due to hwe
-? SNPs removed due to low MAF
+how many people removed
+how many SNPs removed as missing
+how many SNPs removed due to hwe
+how many SNPs removed due to low MAF
 
-? people kept
-? SNPs kept?
+how many people kept
+how many SNPs kept?
 
 Any other files than bam,bed,fam,log generated?
 
@@ -424,7 +424,7 @@ Phasing: Eagle v2.3 (phased output); ShapeIT for X chr
 
 Population (for QC only): ?
 
-Mode: Quality Control & Imputation
+Mode: Quality Control and Imputation
 
 click yes
 
