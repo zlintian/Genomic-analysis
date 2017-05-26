@@ -34,7 +34,9 @@ The following steps should fit most SNP data, but there can be special situation
 13. combine the chromosomes into one file if neccessary.
 14. Choose a proper software for GWAS
 
+
 ########################Quick search of Core Codes##################
+
 ssh ????@delta.imb.uq.edu.au
 
 cd /shares/compbio/PCTG/methylation/mQTL_project/#_cohort/COHORT_genotype
@@ -53,6 +55,7 @@ for i in $(seq 1 22); do vcf-sort QLD_MND-chr$i.vcf | bgzip -c > QLD_MND-chr$i.v
 #more to add
 
 ########################Important resourses#########################
+
 ##For tips using delta server:
 http://igc-wiki.imb.uq.edu.au/igc/PBSPro%20usage
 
@@ -76,7 +79,9 @@ Book chapter:Bioinformatics Volume II: Structure, Function and Applications Seco
 ##use an interactive node when necessary. 
 qsub -l select=1:mem=8G -l walltime=12:00:00 -I -q interactive
 
+
 ########################Collect data from colleague#################
+
 #better ask for the no-duplicate list too
 #make a copy and name the folder as COHORT_genotype
 ##if get the compressed data
@@ -85,11 +90,14 @@ for .tar files, use tar -xvf
 for .gz files, use unzip
 
 ########################recode to ATGC if using 1234################
+
 check the bim file, if using 1234, recode it.
 ./plink --bfile cohort --recode --make-bed --alleleACGT --out cohort_recoded
 
 :) Thanks to Qian.
+
 ########################Liftover####################################
+
 check whether it's in build 37
 if it's in build 36, using following method to lift it.
 This step can be skiped if a minus strand flip will be carried out with update_build.sh
@@ -160,6 +168,7 @@ LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 ? SNPs in the unlifted file. All of them are shown as #Deleted in new?
 
 :) Thanks to Yang.
+
 ########################look into the QLD_MND genotype data carefully##
 ? SNPs in the bim file.
 ? individuals in the genotype data est. (belong to 666 families)
@@ -176,6 +185,7 @@ awk '{print $1}' COHORT_subset.bim | uniq -c
 ## are there multiple samples in any family?
 
 ########################Get the subset of genotype##################
+
 Determine what samples to keep based on the methylation data.
 #1. Use the ID and the matched family ID (which is the same of ID) in final.txt to form a table "genotype.IDs.txt".
 #2. check the chromosomes included in the genotype data
@@ -189,6 +199,7 @@ Determine what samples to keep based on the methylation data.
 #how many SNPs kept?
 
 ########################QC##########################################
+
 ./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
 
 #make a record of variables and samples removed and kept.
@@ -208,6 +219,7 @@ plink.hh file:List of heterozygous haploid genotypes (SNPs/individuals)
 plink.irem	--mind	List of individuals removed for low genotyping
 
 ########################flip the minus strand########################
+
 ##Find the correct file for the chip used from the following webpage.
 http://www.well.ox.ac.uk/~wrayner/strand/
 http://www.well.ox.ac.uk/~wrayner/tools/
@@ -269,6 +281,7 @@ scp converted.bim tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/
 ##cp the fam and bed file with the same name as the converted bim file
 
 ########################separate into vcf format on chromosomes#######
+
 ##whole panel is available.
 HRC.r1.GRCh37.autosomes.mac5.sites.tab 
 39235158 lines in HRC panel
@@ -291,6 +304,7 @@ sed 's/23/X/' QLD_MND-chr23.vcf > QLD_MND-chrX.vcf
 vcf-sort QLD_MND-chrX.vcf | bgzip -c > QLD_MND-chrX.vcf.gz
 
 ########################submit to imputation#########################
+
 ##apply for an account in the website 
 https://imputationserver.sph.umich.edu/
 #login and click Run
@@ -319,6 +333,7 @@ click Start Imputation
 
 
 ###############################check the imputation results#########################
+
 ##check the plot in qcreport.html
 
 ##Useful code:
@@ -334,6 +349,7 @@ done
 
 
 #################Use bcftools to check and fix the switched allels##############
+
 This step is needed if use Sanger imputation server.
 Find the plugin is at /opt/Modules/bcftools/1.4.1/libexec/bcftools/. The two files in need are fixref.c and fixref.so. 
 
@@ -357,6 +373,7 @@ bcftools +fixref $output -- -f $ref
 :) Thanks to Irfahan.
 
 ########################sanger imputation service####################
+
 ##another option:
 
 First step: registered a globus ID: lintian1986z@globusid.org
@@ -372,6 +389,7 @@ To check the status, click on "status", and put in the Run ID.
 :) Thanks to Yang.
 
 ###############Check the preparation with the check script.###################
+
 cd /shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/
 
 Requires the unzipped tab delimited HRC reference (currently v1.1 HRC.r1-1.GRCh37.wgs.mac5.sites.tab) from the Haplotype Reference Consortium Website here:
@@ -386,6 +404,7 @@ http://www.well.ox.ac.uk/~wrayner/tools/#Checking
 
 
 ####################### Compare between Sanger and Michigan imputation server.
+
 Sanger results don't need password.
 Sanger results don't need to be extracted.
 No need to separate into 22 chromosomes when submit to Sanger.
@@ -394,10 +413,12 @@ bother need to merge together if use GCTA
 
 
 ######################
+
 convert vcf.gz file to plink binary file
 
 
 ####################
+
 merge
 
 
