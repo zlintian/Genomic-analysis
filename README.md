@@ -12,13 +12,11 @@ The genotype data can be found in each directory under /shares/compbio/PCTG/meth
 There's a readme file in each cohort. You can read it and decide whether you would like to start with my imputed data, or QC and impute by yourself.
 Always check with me before you use the imputed data to make sure I have updated it to the latest I have.
 
-My email: tian.lin@imb.uq.edu.au.
-
 
 ########################Genotype preparation workflow###############
 The following steps should fit most SNP data, but there can be special situations come up.
 
-0. define sample list and remove duplicates 
+0. define sample list and remove duplicates. Ask: Is this a family based study? Any related individuals? Is it a case control study?
 1. recode to ATGC if original data was coded with 1234
 2. liftover to build 37 if in build 36 (this step can be omited because it can be done with the flip step, step6.
 3. get the subset of data of selected individuals
@@ -248,8 +246,8 @@ LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 ? extra in genotyped data set.
 
 awk '{print $1}' COHORT_subset.bim | uniq -c 
-# how many families? 
-# are there multiple samples in any family?
+
+Check how many families and whether there are multiple individuals in the same family.
 
 ########################Get the subset of genotype##################
 
