@@ -1,18 +1,18 @@
 # Genomic-analysis
 
 Currently there are five cohorts I have finished imputation:
-BSGS, collected from Allan
-QLD_MND, collected from Beben
-CNH_MND, collected from Beben
-PD, collected from Costanza
-LBCW1, collected from Qian
+BSGS, collected from Allan.
+QLD_MND, collected from Beben.
+CNH_MND, collected from Beben.
+PD, collected from Costanza.
+LBCW1, collected from Qian.
 
 The genotype data can be found in each directory under /shares/compbio/PCTG/methylation/mQTL_project/#_cohort in Delta cluster.
 
 There's a readme file in each cohort. You can read it and decide whether you would like to start with my imputed data, or QC and impute by yourself.
 Always check with me before you use the imputed data to make sure I have updated it to the latest I have.
 
-My email: tian.lin@imb.uq.edu.au
+My email: tian.lin@imb.uq.edu.au.
 
 
 ########################Genotype preparation workflow###############
