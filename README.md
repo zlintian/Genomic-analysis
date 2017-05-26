@@ -248,8 +248,8 @@ LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 ? extra in genotyped data set.
 
 awk '{print $1}' COHORT_subset.bim | uniq -c 
-## how many families? 
-## are there multiple samples in any family?
+# how many families? 
+# are there multiple samples in any family?
 
 ########################Get the subset of genotype##################
 
