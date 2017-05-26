@@ -1,10 +1,15 @@
 # Genomic-analysis
 
 Currently there are five cohorts I have finished imputation:
+
 BSGS, collected from Allan.
+
 QLD_MND, collected from Beben.
+
 CNH_MND, collected from Beben.
+
 PD, collected from Costanza.
+
 LBCW1, collected from Qian.
 
 The genotype data can be found in each directory under /shares/compbio/PCTG/methylation/mQTL_project/#_cohort in Delta cluster.
@@ -204,7 +209,7 @@ sed 's/^23/X/' LBCW1_recoded.map > LBCW1_recoded_Xchanged.map
 
 cp LBCW1_recoded.ped LBCW1_recoded_Xchanged.ped
 
-## now we have both map and ped file ready.
+##now we have both map and ped files ready.
 
 ##run the following command using qsub is better. it takes quite a few minutes.
 
