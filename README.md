@@ -240,19 +240,25 @@ how many SNPs in the unlifted file? All of them are shown as #Deleted in new?
 
 :) Thanks to Yang.
 
-########################look into the QLD_MND genotype data carefully####################
+########################look into the genotype data carefully####################
 
 how many SNPs in the bim file.
+
 how many individuals in the genotype data est. (belong to 666 families)
+
 how many individuals in the methylation data set.
+
 how many individuals in the information sheet
 
 #are genotype data overlap with methylation data set?
+
 how many of them are overlapped.
-how many extra in methylation data set
+
+how many extra in methylation data set.
+
 how many extra in genotyped data set.
 
-awk '{print $1}' COHORT_subset.bim | uniq -c 
+awk '{print $1}' COHORT_subset.bim | uniq -c | less
 
 Check how many families and whether there are multiple individuals in the same family.
 
@@ -275,16 +281,22 @@ Determine what samples to keep based on the methylation data.
 ./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
 
 #make a record of variables and samples removed and kept.
+
 how many people input
+
 how many SNPs input
 
 how many people removed
+
 how many SNPs removed as missing
+
 how many SNPs removed due to hwe
+
 how many SNPs removed due to low MAF
 
 how many people kept
-how many SNPs kept?
+
+how many SNPs kept
 
 Any other files than bam,bed,fam,log generated?
 
@@ -377,6 +389,7 @@ scp converted.bim tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/
 ########################separate into vcf format on chromosomes#######
 
 ##whole panel is available.
+
 HRC.r1.GRCh37.autosomes.mac5.sites.tab 
 
 39235158 lines in HRC panel
@@ -384,7 +397,7 @@ HRC.r1.GRCh37.autosomes.mac5.sites.tab
 ##softwares are available in modules in delta server. 
 module avail 					
 
-module load tabix/0.2.6			##for the function bgzip
+module load tabix/0.2.6		##for the function bgzip
 
 module load vcftools/0.1.15 	##for the function vcf-sort
 
