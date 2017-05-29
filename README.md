@@ -41,33 +41,33 @@ The following steps should fit most SNP data, but there can be special situation
 
 ########################Quick search of Core Codes##################
 
-ssh username@delta.imb.uq.edu.au
+	ssh username@delta.imb.uq.edu.au
 
-cd /shares/compbio/PCTG/methylation/mQTL_project/#_cohort/COHORT_genotype
+	cd /shares/compbio/PCTG/methylation/mQTL_project/#_cohort/COHORT_genotype
 
-qsub -l select=1:mem=8G -l walltime=12:00:00 -I -q interactive
+	qsub -l select=1:mem=8G -l walltime=12:00:00 -I -q interactive
 
-for tar.gz files, use tar -xvf 
+	for tar.gz files, use tar -xvf 
 
-for .tar files, use tar -xvf 
+	for .tar files, use tar -xvf 
 
-for .gz files, use unzip
+	for .gz files, use unzip
 
-./plink --bfile cohort --recode --make-bed --alleleACGT --out cohort_recoded
+	./plink --bfile cohort --recode --make-bed --alleleACGT --out cohort_recoded
 
-python liftMap.py -m LBCW1_recoded.map -p LBCW1_recoded.ped -o LBCW1_recoded_lifted
+	python liftMap.py -m LBCW1_recoded.map -p LBCW1_recoded.ped -o LBCW1_recoded_lifted
 
-./plink --file LBCW1_recoded_lifted --keep genotype.IDs.txt --chr 1-23  --make-bed --out LBCW1_subset
+	./plink --file LBCW1_recoded_lifted --keep genotype.IDs.txt --chr 1-23  --make-bed --out LBCW1_subset
 
-./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
+	./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
 
-./plink --bfile Tian_cleand_bsgs --flip Human610Quadv1_B-b37-strand-v2/Human610-Quadv1_B-b37-v2_minus.strand  --recode  --make-bed  --out flip_Tian_cleand
+	./plink --bfile Tian_cleand_bsgs --flip Human610Quadv1_B-b37-strand-v2/Human610-Quadv1_B-b37-v2_minus.strand  --recode  --make-bed  --out flip_Tian_cleand
 
-for i in $(seq 1 22); do ./plink --bfile idsed.fliped.QLD_MND  --chr $i --recode vcf --out QLD_MND-chr$i; done
+	for i in $(seq 1 22); do ./plink --bfile idsed.fliped.QLD_MND  --chr $i --recode vcf --out QLD_MND-chr$i; done
 
-for i in $(seq 1 22); do vcf-sort QLD_MND-chr$i.vcf | bgzip -c > QLD_MND-chr$i.vcf.gz; done
+	for i in $(seq 1 22); do vcf-sort QLD_MND-chr$i.vcf | bgzip -c > QLD_MND-chr$i.vcf.gz; done
 
-./plink --bfile idsed.fliped.QLD_MND  --exclude SNPs.in.hh.txt --chr 23 --recode vcf --out QLD_MND-chr23
+	./plink --bfile idsed.fliped.QLD_MND  --exclude SNPs.in.hh.txt --chr 23 --recode vcf --out QLD_MND-chr23
 
 #more to add
 
@@ -129,7 +129,7 @@ for .gz files, use unzip
 
 check the bim file, if using 1234, recode it.
 
-./plink --bfile cohort --recode --make-bed --alleleACGT --out cohort_recoded
+	./plink --bfile cohort --recode --make-bed --alleleACGT --out cohort_recoded
 
 
 :) Thanks to Qian.
@@ -187,10 +187,10 @@ hg18ToHg19.over.chain
 liftOver (a binary file that need to chmod u+x, and use it as ./liftOver)
 
 
-vi liftMap.py
-##find the following part and change the params['LIFTOVER_BIN'] and params['CHAIN']
+	vi liftMap.py
+	##find the following part and change the params['LIFTOVER_BIN'] and params['CHAIN']
 
-params = dict()
+	params = dict()
     params['LIFTOVER_BIN'] = './liftOver'
     params['OLD'] = fin
     params['CHAIN'] = 'hg18ToHg19.over.chain'
@@ -205,15 +205,15 @@ liftMap.py: error: argument -m is required
 
 ##CAUTION: liftover don't recognize chr23,24. chr23 need to change to X. chr24 need to change to Y
 
-sed 's/^23/X/' LBCW1_recoded.map > LBCW1_recoded_Xchanged.map
+	sed 's/^23/X/' LBCW1_recoded.map > LBCW1_recoded_Xchanged.map
 
-cp LBCW1_recoded.ped LBCW1_recoded_Xchanged.ped
+	cp LBCW1_recoded.ped LBCW1_recoded_Xchanged.ped
 
 ##now we have both map and ped files ready.
 
 ##run the following command using qsub is better. it takes quite a few minutes.
 
-python liftMap.py -m LBCW1_recoded.map -p LBCW1_recoded.ped -o LBCW1_recoded_lifted
+	python liftMap.py -m LBCW1_recoded.map -p LBCW1_recoded.ped -o LBCW1_recoded_lifted
 
 ##the outputs:
 SUCC:  map->bed succ
@@ -269,7 +269,7 @@ Determine what samples to keep based on the methylation data.
 #2. check the chromosomes included in the genotype data
 #3. use plink to get the subset of genotype data.
 
-./plink --file LBCW1_recoded_lifted --keep genotype.IDs.txt --chr 1-23  --make-bed --out LBCW1_subset
+	./plink --file LBCW1_recoded_lifted --keep genotype.IDs.txt --chr 1-23  --make-bed --out LBCW1_subset
 
 #how many samples in raw?
 #how many samples to keep?
@@ -278,7 +278,7 @@ Determine what samples to keep based on the methylation data.
 
 ########################QC##########################################
 
-./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
+	./plink --bfile cohort --mind 0.05 --geno 0.05 --hwe 0.000001 --maf 0.01  --make-bed --out Tian_cleand_cohort
 
 #make a record of variables and samples removed and kept.
 
@@ -321,13 +321,13 @@ http://www.well.ox.ac.uk/~wrayner/tools/
 
 ##1. grep the minus strand from the strand file
 
-grep -w '-' Human610-Quadv1_B-b37-v2.strand > Human610-Quadv1_B-b37-v2_minus.strand 
+	grep -w '-' Human610-Quadv1_B-b37-v2.strand > Human610-Quadv1_B-b37-v2_minus.strand 
 
 ##CAUTION: Remember to use -w in grep. otherwise the SNPs with a - in its identifier will be grepped and flipped.
 
 ##2. use plink --flip function to flip the minus strand in bim file.
 
-./plink --bfile Tian_cleand_bsgs --flip Human610Quadv1_B-b37-strand-v2/Human610-Quadv1_B-b37-v2_minus.strand  --recode  --make-bed  --out flip_Tian_cleand
+	./plink --bfile Tian_cleand_bsgs --flip Human610Quadv1_B-b37-strand-v2/Human610-Quadv1_B-b37-v2_minus.strand  --recode  --make-bed  --out flip_Tian_cleand
 
 #go through the file, grep a few SNPs and double check with the bim file and strand file.
 
@@ -351,9 +351,11 @@ A script developed by Neil Robertson for updating the chomosome, position and st
 
 update_build.sh
 
-Usage is update_build.sh <bed-file-stem> <strand-file> <output-file-stem>
-where:
+Usage is 
 
+	update_build.sh <bed-file-stem> <strand-file> <output-file-stem>
+
+where:
  
 <bed-file-stem> is the name of your binary ped set minus the .bed, .bim or .fam extension
 
@@ -371,18 +373,53 @@ where:
 scp tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/mQTL_project/1_COHORT/COHORT_genotype/fliped.bim  /?/
 
 #use key_scripts/rsids.R to convert it, and output the converted bim, and a list of SNPs that were converted.
-#how many converted?
 
-##CAUTION: the SNPs in the bim file are sorted in 1, 11, 12, .....19, 2, 21, 22, 3, 4, 5, 6, 7,..
-##reorder the SNPs
+	R
+	bimname <- "flip_Tian_cleaned_PD.bim"
+	bim <- read.table(bimname, colClasses=c("numeric", "character", "numeric", "numeric", "character", "character"))
+	bim$index <- 1:nrow(bim)
 
-a[a[,1]=="X",1]=23
+	##23-->X
+	bim[(bim[,1]==23),1]="X"
+	###if there are other chr than 1~23, remove them use plink,
+	###Don't remove them only in bim file.
 
-sorted.a=a[with(a, order(as.numeric(V1),V4)),]
+	# For each chromosome download the SNP locations and match to bim file
+	a <- ddply(bim, .(V1), .progress="text", function(x)
+	{
+	  x <- mutate(x)
+	  chr <- paste("ch", x$V1[1], sep="")
+	  snps <- getSNPlocs(chr)
+	  snps <- subset(snps, loc %in% x$V4, select=-c(alleles_as_ambig))
+	  snps$RefSNP_id <- paste("rs", snps$RefSNP_id, sep="")
+	  snps <- subset(snps, !duplicated(loc))
+	  snps <- subset(snps, !duplicated(RefSNP_id))
+  
+	  x <- merge(x, snps, by.x="V4", by.y="loc", all.x=T)
+	  x <- x[order(x$index), ]
+	  index <- !is.na(x$RefSNP_id)
+	  x$V2[index] <- x$RefSNP_id[index]
+	  x <- subset(x, select=c(V1, V2, V3, V4, V5, V6))
+	  return(x)
+	})
 
-write.table(sorted.a, file="idsed.fliped.QLD_MND.bim", row=F, col=F, qu=F)
+	# If there are duplicated SNPs for any reason then label them as _2, _3 etc
+	temp <- rle(a$V2)
+	temp2 <- paste0(rep(temp$values, times = temp$lengths), "_", unlist(lapply(temp$lengths, seq_len)))
+	temp2 <- gsub("_1", "", temp2)
+	a$V2 <- temp2
 
-scp converted.bim tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/COHORT_genotype/
+
+	##CAUTION: the SNPs in the bim file are sorted in 1, 11, 12, .....19, 2, 21, 22, 3, 4, 5, 6, 7,..
+	##reorder the SNPs
+
+	a[a[,1]=="X",1]=23
+
+	sorted.a=a[with(a, order(as.numeric(V1),V4)),]
+
+	write.table(sorted.a, file="idsed.fliped.QLD_MND.bim", row=F, col=F, qu=F)
+
+	scp converted.bim tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/COHORT_genotype/
 
 ##cp the fam and bed file with the same name as the converted bim file
 
@@ -395,29 +432,29 @@ HRC.r1.GRCh37.autosomes.mac5.sites.tab
 39235158 lines in HRC panel
 
 ##softwares are available in modules in delta server. 
-module avail 					
+	module avail 					
 
-module load tabix/0.2.6		##for the function bgzip
+	module load tabix/0.2.6		##for the function bgzip
 
-module load vcftools/0.1.15 	##for the function vcf-sort
+	module load vcftools/0.1.15 	##for the function vcf-sort
 
-##files are separated based on chromosome.
+	##files are separated based on chromosome.
 
-for i in $(seq 1 22); do ./plink --bfile idsed.fliped.QLD_MND  --chr $i --recode vcf --out QLD_MND-chr$i; done
+	for i in $(seq 1 22); do ./plink --bfile idsed.fliped.QLD_MND  --chr $i --recode vcf --out QLD_MND-chr$i; done
 
-for i in $(seq 1 22); do vcf-sort QLD_MND-chr$i.vcf | bgzip -c > QLD_MND-chr$i.vcf.gz; done
+	for i in $(seq 1 22); do vcf-sort QLD_MND-chr$i.vcf | bgzip -c > QLD_MND-chr$i.vcf.gz; done
 
-##remove the SNPs in hh file for X chromosome
+	##remove the SNPs in hh file for X chromosome
 
-./plink --bfile idsed.fliped.QLD_MND  --exclude SNPs.in.hh.txt --chr 23 --recode vcf --out QLD_MND-chr23
+	./plink --bfile idsed.fliped.QLD_MND  --exclude SNPs.in.hh.txt --chr 23 --recode vcf --out QLD_MND-chr23
 
-##The X chromosome is denoted as 23 in the genotype file. but X in the reference panel.
+	##The X chromosome is denoted as 23 in the genotype file. but X in the reference panel.
 
-##Remember to change 23 into X in the vcf file.
+	##Remember to change 23 into X in the vcf file.
 
-sed 's/23/X/' QLD_MND-chr23.vcf > QLD_MND-chrX.vcf
+	sed 's/23/X/' QLD_MND-chr23.vcf > QLD_MND-chrX.vcf
 
-vcf-sort QLD_MND-chrX.vcf | bgzip -c > QLD_MND-chrX.vcf.gz
+	vcf-sort QLD_MND-chrX.vcf | bgzip -c > QLD_MND-chrX.vcf.gz
 
 ########################submit to imputation#########################
 
@@ -470,11 +507,11 @@ vcftools --gzvcf input.vcf.gz --plink --out output
 
 ##Release a group of files that share the same password at once.
 
-for zipfile in *.zip; do
+	for zipfile in *.zip; do
 
-/usr/bin/unzip -P 'iaBx|62TibB{HX' $zipfile
+	/usr/bin/unzip -P 'iaBx|62TibB{HX' $zipfile
 
-done
+	done
 
 
 
@@ -486,28 +523,28 @@ Find the plugin is at /opt/Modules/bcftools/1.4.1/libexec/bcftools/. The two fil
 
 qsub the following script. 
 
-#!/bin/sh
-#PBS -l walltime=48:00:00
-#PBS -l select=1:ncpus=1:mem=128gb
+	#!/bin/sh
+	#PBS -l walltime=48:00:00
+	#PBS -l select=1:ncpus=1:mem=128gb
 
-cd /shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/
+	cd /shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/
 
-module load bcftools/1.4.1
+	module load bcftools/1.4.1
 
-export BCFTOOLS_PLUGINS=/opt/Modules/bcftools/1.4.1/libexec/bcftools/
+	export BCFTOOLS_PLUGINS=/opt/Modules/bcftools/1.4.1/libexec/bcftools/
 
 
-ref='/shares/compbio/PCTG/methylation/mQTL_project/human_g1k_v37.fasta'
+	ref='/shares/compbio/PCTG/methylation/mQTL_project/human_g1k_v37.fasta'
 
-input='/shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/PD_nomismatch-chrX.vcf.gz'
+	input='/shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/PD_nomismatch-chrX.vcf.gz'
 
-output='/shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/PD_nomismatch-chrX_fixed.vcf.gz'
+	output='/shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/PD_nomismatch-chrX_fixed.vcf.gz'
 
-bcftools +fixref $input -- -f $ref
+	bcftools +fixref $input -- -f $ref
 
-bcftools +fixref $input -Oz -o $output -- -d -f $ref -m flip
+	bcftools +fixref $input -Oz -o $output -- -d -f $ref -m flip
 
-bcftools +fixref $output -- -f $ref
+	bcftools +fixref $output -- -f $ref
 
 :) Thanks to Irfahan.
 
