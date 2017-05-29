@@ -635,28 +635,28 @@ Need to be merge chromosomes together if use GCTA --mlma-loco
 Because their outputs have different names of the information in INFO column.
 
 
-#!/bin/sh
+	#!/bin/sh
 
-#PBS -l walltime=48:00:00
+	#PBS -l walltime=48:00:00
 
-#PBS -l select=1:ncpus=1:mem=128gb
+	#PBS -l select=1:ncpus=1:mem=128gb
 
-cd /shares/compbio/PCTG/methylation/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/
+	cd /shares/compbio/PCTG/methylation/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/
 
 
-module load bcftools/1.4.1
+	module load bcftools/1.4.1
 
-outdir="plink_format/"
+	outdir="plink_format/"
 
-for((i=1;i<=22;i++))
+	for((i=1;i<=22;i++))
 
-do
+	do
 
     ./plink2 --vcf $i".vcf.gz" --double-id  --id-delim '_' --keep-allele-order --make-bed --out $outdir"BSGS_imputed_chr"$i > $outdir"BSGS_chr"$i".log" 
     
 	bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%INFO/AC\t%INFO/AN\t%INFO/RefPanelAF\t%INFO/INFO\n' $i".vcf.gz" > $outdir"BSGS_chr"$i".info"
 
-done
+	done
 
 
 ################### Fix missing IDs in the bim file ########################
