@@ -619,6 +619,7 @@ Need to be merge chromosomes together if use GCTA --mlma-loco
 ###################### convert vcf.gz file to plink binary file ################
 
 ## CAUTION  
+
 ##Before run the following command,
 
 ##1. check the individual ID, if there's multiple _ in the FID_IID field, use --const-fid, if only the _ between FID_IID, use --double-id  --id-delim '_', so the ID in vcf file will be split into FID and IID.
@@ -723,47 +724,27 @@ vi the following file.
 
 allfiles.txt
 
-BSGS_chr2.bed BSGS_chr2.bim BSGS_chr2.fam 
-
-BSGS_chr3.bed BSGS_chr3.bim BSGS_chr3.fam 
-
-BSGS_chr4.bed BSGS_chr4.bim BSGS_chr4.fam 
-
-BSGS_chr5.bed BSGS_chr5.bim BSGS_chr5.fam 
-
-BSGS_chr6.bed BSGS_chr6.bim BSGS_chr6.fam 
-
-BSGS_chr7.bed BSGS_chr7.bim BSGS_chr7.fam 
-
-BSGS_chr8.bed BSGS_chr8.bim BSGS_chr8.fam 
-
-BSGS_chr9.bed BSGS_chr9.bim BSGS_chr9.fam 
-
-BSGS_chr10.bed BSGS_chr10.bim BSGS_chr10.fam 
-
-BSGS_chr11.bed BSGS_chr11.bim BSGS_chr11.fam 
-
-BSGS_chr12.bed BSGS_chr12.bim BSGS_chr12.fam 
-
-BSGS_chr13.bed BSGS_chr13.bim BSGS_chr13.fam 
-
-BSGS_chr14.bed BSGS_chr14.bim BSGS_chr14.fam 
-
-BSGS_chr15.bed BSGS_chr15.bim BSGS_chr15.fam 
-
-BSGS_chr16.bed BSGS_chr16.bim BSGS_chr16.fam 
-
-BSGS_chr17.bed BSGS_chr17.bim BSGS_chr17.fam 
-
-BSGS_chr18.bed BSGS_chr18.bim BSGS_chr18.fam 
-
-BSGS_chr19.bed BSGS_chr19.bim BSGS_chr19.fam 
-
-BSGS_chr20.bed BSGS_chr20.bim BSGS_chr20.fam 
-
-BSGS_chr21.bed BSGS_chr21.bim BSGS_chr21.fam 
-
-BSGS_chr22.bed BSGS_chr22.bim BSGS_chr22.fam 
+	BSGS_chr2.bed BSGS_chr2.bim BSGS_chr2.fam 
+	BSGS_chr3.bed BSGS_chr3.bim BSGS_chr3.fam 
+	BSGS_chr4.bed BSGS_chr4.bim BSGS_chr4.fam 
+	BSGS_chr5.bed BSGS_chr5.bim BSGS_chr5.fam 
+	BSGS_chr6.bed BSGS_chr6.bim BSGS_chr6.fam 
+	BSGS_chr7.bed BSGS_chr7.bim BSGS_chr7.fam 
+	BSGS_chr8.bed BSGS_chr8.bim BSGS_chr8.fam 
+	BSGS_chr9.bed BSGS_chr9.bim BSGS_chr9.fam 
+	BSGS_chr10.bed BSGS_chr10.bim BSGS_chr10.fam 
+	BSGS_chr11.bed BSGS_chr11.bim BSGS_chr11.fam 
+	BSGS_chr12.bed BSGS_chr12.bim BSGS_chr12.fam 
+	BSGS_chr13.bed BSGS_chr13.bim BSGS_chr13.fam 
+	BSGS_chr14.bed BSGS_chr14.bim BSGS_chr14.fam 
+	BSGS_chr15.bed BSGS_chr15.bim BSGS_chr15.fam 
+	BSGS_chr16.bed BSGS_chr16.bim BSGS_chr16.fam 
+	BSGS_chr17.bed BSGS_chr17.bim BSGS_chr17.fam 
+	BSGS_chr18.bed BSGS_chr18.bim BSGS_chr18.fam 
+	BSGS_chr19.bed BSGS_chr19.bim BSGS_chr19.fam 
+	BSGS_chr20.bed BSGS_chr20.bim BSGS_chr20.fam 
+	BSGS_chr21.bed BSGS_chr21.bim BSGS_chr21.fam 
+	BSGS_chr22.bed BSGS_chr22.bim BSGS_chr22.fam 
 
 combine BSGS_chr1 with the ones in list
 
