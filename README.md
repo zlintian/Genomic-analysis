@@ -22,7 +22,7 @@ Always check with me before you use the imputed data to make sure I have updated
 
 The following steps should fit most SNP data, but there can be special situations come up. 
 
-0. define sample list and remove duplicates. Ask: Is this a family based study? Any related individuals? Is it a case control study?
+0. define sample list. 
 1. recode to ATGC if original data was coded with 1234
 2. liftover to build 37 if in build 36 (this step can be omited because it can be done with the flip step, step6.
 3. get the subset of data of selected individuals
