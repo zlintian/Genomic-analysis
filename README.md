@@ -219,18 +219,18 @@ liftMap.py: error: argument -m is required
 	python liftMap.py -m LBCW1_recoded.map -p LBCW1_recoded.ped -o LBCW1_recoded_lifted
 
 ##the outputs:
-SUCC:  map->bed succ
-Reading liftover chains
-Mapping coordinates
-SUCC:  liftBed succ
-SUCC:  bed->map succ
-SUCC:  liftPed succ
+	SUCC:  map->bed succ
+	Reading liftover chains
+	Mapping coordinates
+	SUCC:  liftBed succ
+	SUCC:  bed->map succ
+	SUCC:  liftPed succ
 
-LBCW1_recoded_lifted.ped
-LBCW1_recoded_lifted.map
-LBCW1_recoded_lifted.bed
-LBCW1_recoded_lifted.bed.unlifted
-LBCW1_recoded.map.bed
+	LBCW1_recoded_lifted.ped
+	LBCW1_recoded_lifted.map
+	LBCW1_recoded_lifted.bed
+	LBCW1_recoded_lifted.bed.unlifted
+	LBCW1_recoded.map.bed
 
 LBCW1_recoded.map.bed is the BED format file which is reformatted from the plink bed file. Don't need it.
 
@@ -753,15 +753,11 @@ combine BSGS_chr1 with the ones in list
 
 BSGS_chr1.bed BSGS_chr1.bim	BSGS_chr1.fam 
 
-#!/bin/sh
-
-#PBS -l walltime=48:00:00
-
-#PBS -l select=1:ncpus=1:mem=128gb
-
-cd /home/tian.lin/mQTL_project/Imputed_data/1_BSGS/GWAS/plink_format
-
-./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
+	#!/bin/sh
+	#PBS -l walltime=48:00:00
+	#PBS -l select=1:ncpus=1:mem=128gb
+	cd /home/tian.lin/mQTL_project/Imputed_data/1_BSGS/GWAS/plink_format
+	./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
 
 
 
