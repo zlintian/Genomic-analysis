@@ -15,6 +15,9 @@ LBCW1, collected from Qian.
 The genotype data can be found in each directory under /shares/compbio/PCTG/methylation/mQTL_project/#_cohort in Delta cluster.
 
 There's a readme file in each cohort. You can read it and decide whether you would like to start with my imputed data, or QC and impute by yourself.
+
+Imputed data are saved in /shares/compbio/PCTG/methylation/mQTL_project/Sange_imputed, and /shares/compbio/PCTG/methylation/mQTL_project/Michigan_imputed. They are under processing now.
+
 Always check with me before you use the imputed data to make sure I have updated it to the latest I have.
 
 
