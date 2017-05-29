@@ -555,23 +555,213 @@ http://www.well.ox.ac.uk/~wrayner/tools/#Checking
 
 
 
-####################### Compare between Sanger and Michigan imputation server.
 
-Sanger results don't need password.
-Sanger results don't need to be extracted.
+#######################compare Sanger vs Michigan ###########
+
+Michigan is easier in submit the job. Just need to apply an account and click on the webpage.
+
+Sanger needs to install globus to submit the data.
+
 No need to separate into 22 chromosomes when submit to Sanger.
 
-bother need to merge together if use GCTA 
+Sanger communicate with around 6 emails per job.
+
+Sanger results don't need to be extracted with a password.
+
+Sanger output used as much rs IDs as possible. Only some "." and duplicate IDs need to be fixed.
+
+Michigan output all used chr:position as SNP ID.
+
+Both of their output are separated based on chromosomes.
+
+Need to be merge chromosomes together if use GCTA --mlma-loco
 
 
-######################
-
-convert vcf.gz file to plink binary file
 
 
-####################
+###################### convert vcf.gz file to plink binary file ################
+
+## CAUTION  
+##Before run the following command,
+
+##1. check the individual ID, if there's multiple _ in the FID_IID field, use --const-fid, if only the _ between FID_IID, use --double-id  --id-delim '_', so the ID in vcf file will be split into FID and IID.
+
+##2. if imputed by Michigan, use  
+
+	bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/AF\t%INFO/MAF\t%INFO/R2\t%INFO/ER2\n' "chr"$i".dose.vcf.gz" > "imputed_chr"$i".info"
+	
+	if imputed by Sanger, use
+	
+	bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%INFO/AC\t%INFO/AN\t%INFO/RefPanelAF\t%INFO/INFO\n' $vcf$i".dose.vcf.gz" > $outdir"BSGS_chr"$i".info"
+
+Because their outputs have different names of the information in INFO column.
+
+
+#!/bin/sh
+
+#PBS -l walltime=48:00:00
+
+#PBS -l select=1:ncpus=1:mem=128gb
+
+cd /shares/compbio/PCTG/methylation/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/
+
+
+module load bcftools/1.4.1
+
+outdir="plink_format/"
+
+for((i=1;i<=22;i++))
+
+do
+
+    ./plink2 --vcf $i".vcf.gz" --double-id  --id-delim '_' --keep-allele-order --make-bed --out $outdir"BSGS_imputed_chr"$i > $outdir"BSGS_chr"$i".log" 
+    
+	bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%INFO/AC\t%INFO/AN\t%INFO/RefPanelAF\t%INFO/INFO\n' $i".vcf.gz" > $outdir"BSGS_chr"$i".info"
+
+done
+
+
+################### Fix missing IDs in the bim file ########################
+
+R
+
+library(data.table)
+
+for (i in 1:22){
+
+bim=fread(paste("plink_format/BSGS_imputed_chr",i,".bim",sep=""))
+
+missid=which(bim$V2==".")
+
+bim$V2[missid]=paste("chr",bim$V1[missid],":",bim$V4[missid],sep="")
+
+write.table(bim,paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""),col=F,row=F,sep="\t",quote=F)
+}
+
+rename.duplicate <- function (x, sep = "_dup", verbose = FALSE) 
+{
+	x <- as.character(x)
+	
+	duplix <- duplicated(x)
+	
+	duplin <- x[duplix]
+	
+	ix <- numeric(length = length(unique(duplin)))
+	
+	names(ix) <- unique(duplin)
+	
+	retval <- numeric(length = length(duplin))
+	
+	for (i in 1:length(duplin)) {
+		retval[i] <- ix[duplin[i]] <- ix[duplin[i]] + 1
+	}
+	
+	retval <- retval + 1
+	
+	x[duplix] <- paste(duplin, retval, sep = sep)
+	
+	if (verbose) {
+		message(sprintf("%i duplicated names", length(duplin)))
+	}
+	
+	return(list(new.x = x, duplicated.x = duplin))
+}
+
+for (i in 1:22){
+bim=fread(paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""))
+
+dups <- unique(bim$V2[duplicated(bim$V2)])
+
+ndup <- length(dups)
+
+if(ndup == 0)
+{
+	cat("No duplicate SNPs\n")
+	
+	q()
+} else {
+	cat(paste(ndup, "duplicate SNPs\n"))
+}
+
+bim$V2 <- rename.duplicate(bim$V2, sep="_dup")[[1]]
+
+write.table(bim,paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""),col=F,row=F,sep="\t",quote=F)
+}
+
+
+
+
+
+#################### merge imputed chromosomes ##################
 
 merge
+
+vi the following file.
+
+##CAUTION: no chr1 in this file.
+
+##CAUTION: put the .bed filename first, then the .bim filename, then the .fam filename
+
+##otherwise: Error: Line 1 of BSGS_chr2.bed has fewer tokens than expected.
+
+allfiles.txt
+
+BSGS_chr2.bed BSGS_chr2.bim BSGS_chr2.fam 
+
+BSGS_chr3.bed BSGS_chr3.bim BSGS_chr3.fam 
+
+BSGS_chr4.bed BSGS_chr4.bim BSGS_chr4.fam 
+
+BSGS_chr5.bed BSGS_chr5.bim BSGS_chr5.fam 
+
+BSGS_chr6.bed BSGS_chr6.bim BSGS_chr6.fam 
+
+BSGS_chr7.bed BSGS_chr7.bim BSGS_chr7.fam 
+
+BSGS_chr8.bed BSGS_chr8.bim BSGS_chr8.fam 
+
+BSGS_chr9.bed BSGS_chr9.bim BSGS_chr9.fam 
+
+BSGS_chr10.bed BSGS_chr10.bim BSGS_chr10.fam 
+
+BSGS_chr11.bed BSGS_chr11.bim BSGS_chr11.fam 
+
+BSGS_chr12.bed BSGS_chr12.bim BSGS_chr12.fam 
+
+BSGS_chr13.bed BSGS_chr13.bim BSGS_chr13.fam 
+
+BSGS_chr14.bed BSGS_chr14.bim BSGS_chr14.fam 
+
+BSGS_chr15.bed BSGS_chr15.bim BSGS_chr15.fam 
+
+BSGS_chr16.bed BSGS_chr16.bim BSGS_chr16.fam 
+
+BSGS_chr17.bed BSGS_chr17.bim BSGS_chr17.fam 
+
+BSGS_chr18.bed BSGS_chr18.bim BSGS_chr18.fam 
+
+BSGS_chr19.bed BSGS_chr19.bim BSGS_chr19.fam 
+
+BSGS_chr20.bed BSGS_chr20.bim BSGS_chr20.fam 
+
+BSGS_chr21.bed BSGS_chr21.bim BSGS_chr21.fam 
+
+BSGS_chr22.bed BSGS_chr22.bim BSGS_chr22.fam 
+
+combine BSGS_chr1 with the ones in list
+
+BSGS_chr1.bed BSGS_chr1.bim	BSGS_chr1.fam 
+
+#!/bin/sh
+
+#PBS -l walltime=48:00:00
+
+#PBS -l select=1:ncpus=1:mem=128gb
+
+cd /home/tian.lin/mQTL_project/Imputed_data/1_BSGS/GWAS/plink_format
+
+./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
+
 
 
 
