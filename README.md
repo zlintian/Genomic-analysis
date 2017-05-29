@@ -623,18 +623,18 @@ done
 
 ################### Fix missing IDs in the bim file ########################
 
-R
+	R
 
-library(data.table)
-for (i in 1:22){
-bim=fread(paste("plink_format/BSGS_imputed_chr",i,".bim",sep=""))
-missid=which(bim$V2==".")
-bim$V2[missid]=paste("chr",bim$V1[missid],":",bim$V4[missid],sep="")
-write.table(bim,paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""),col=F,row=F,sep="\t",quote=F)
-}
+	library(data.table)
+	for (i in 1:22){
+	bim=fread(paste("plink_format/BSGS_imputed_chr",i,".bim",sep=""))
+	missid=which(bim$V2==".")
+	bim$V2[missid]=paste("chr",bim$V1[missid],":",bim$V4[missid],sep="")
+	write.table(bim,paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""),col=F,row=F,sep="\t",quote=F)
+	}
 
-rename.duplicate <- function (x, sep = "_dup", verbose = FALSE) 
-{
+	rename.duplicate <- function (x, sep = "_dup", verbose = FALSE) 
+	{
 	x <- as.character(x)	
 	duplix <- duplicated(x)	
 	duplin <- x[duplix]	
@@ -651,22 +651,22 @@ rename.duplicate <- function (x, sep = "_dup", verbose = FALSE)
 		message(sprintf("%i duplicated names", length(duplin)))
 	}	
 	return(list(new.x = x, duplicated.x = duplin))
-}
+	}
 
-for (i in 1:22){
-bim=fread(paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""))
-dups <- unique(bim$V2[duplicated(bim$V2)])
-ndup <- length(dups)
-if(ndup == 0)
-{
+	for (i in 1:22){
+	bim=fread(paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""))
+	dups <- unique(bim$V2[duplicated(bim$V2)])
+	ndup <- length(dups)
+	if(ndup == 0)
+	{
 	cat("No duplicate SNPs\n")	
 	q()
-} else {
+	} else {
 	cat(paste(ndup, "duplicate SNPs\n"))
-}
-bim$V2 <- rename.duplicate(bim$V2, sep="_dup")[[1]]
-write.table(bim,paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""),col=F,row=F,sep="\t",quote=F)
-}
+	}
+	bim$V2 <- rename.duplicate(bim$V2, sep="_dup")[[1]]
+	write.table(bim,paste("fixed_ID/BSGS_imputed_chr",i,".bim",sep=""),col=F,row=F,sep="\t",quote=F)
+	}
 
 
 :) Thanks to Yang!
