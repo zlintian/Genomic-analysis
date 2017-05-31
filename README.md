@@ -220,16 +220,25 @@ liftMap.py: error: argument -m is required
 
 ##the outputs:
 	SUCC:  map->bed succ
+	
 	Reading liftover chains
+	
 	Mapping coordinates
+	
 	SUCC:  liftBed succ
+	
 	SUCC:  bed->map succ
+	
 	SUCC:  liftPed succ
 
 	LBCW1_recoded_lifted.ped
+	
 	LBCW1_recoded_lifted.map
+	
 	LBCW1_recoded_lifted.bed
+	
 	LBCW1_recoded_lifted.bed.unlifted
+	
 	LBCW1_recoded.map.bed
 
 LBCW1_recoded.map.bed is the BED format file which is reformatted from the plink bed file. Don't need it.
