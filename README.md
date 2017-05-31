@@ -232,7 +232,7 @@ LBCW1_recoded_lifted.bed file is in BED format, we don't need it either. change 
 
 LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 
-how many SNPs in the unlifted file? All of them are shown as #Deleted in new?
+check how many SNPs in the unlifted file. In my file, all of them are shown as "#Deleted in new".
 
 
 :) Thanks to Yang.
