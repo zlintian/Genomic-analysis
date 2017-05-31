@@ -274,10 +274,10 @@ Determine what samples to keep based on the methylation data.
 
 	./plink --file LBCW1_recoded_lifted --keep genotype.IDs.txt --chr 1-23  --make-bed --out LBCW1_subset
 
-#how many samples in raw?
-#how many samples to keep?
-#how many SNPs input?
-#how many SNPs kept?
+#how many samples in raw
+#how many samples to keep
+#how many SNPs input
+#how many SNPs kept
 
 ########################QC##########################################
 
@@ -533,20 +533,14 @@ qsub the following script.
 	cd /shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/
 
 	module load bcftools/1.4.1
-
 	export BCFTOOLS_PLUGINS=/opt/Modules/bcftools/1.4.1/libexec/bcftools/
 
-
 	ref='/shares/compbio/PCTG/methylation/mQTL_project/human_g1k_v37.fasta'
-
 	input='/shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/PD_nomismatch-chrX.vcf.gz'
-
 	output='/shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/separated_with_resorted/chrX/PD_nomismatch-chrX_fixed.vcf.gz'
 
 	bcftools +fixref $input -- -f $ref
-
 	bcftools +fixref $input -Oz -o $output -- -d -f $ref -m flip
-
 	bcftools +fixref $output -- -f $ref
 
 :) Thanks to Irfahan.
@@ -631,7 +625,7 @@ Need to be merge chromosomes together if use GCTA --mlma-loco
 
 	bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/AF\t%INFO/MAF\t%INFO/R2\t%INFO/ER2\n' "chr"$i".dose.vcf.gz" > "imputed_chr"$i".info"
 	
-	if imputed by Sanger, use
+if imputed by Sanger, use
 	
 	bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%INFO/AC\t%INFO/AN\t%INFO/RefPanelAF\t%INFO/INFO\n' $vcf$i".dose.vcf.gz" > $outdir"BSGS_chr"$i".info"
 
@@ -639,26 +633,16 @@ Because their outputs have different names of the information in INFO column.
 
 
 	#!/bin/sh
-
 	#PBS -l walltime=48:00:00
-
 	#PBS -l select=1:ncpus=1:mem=128gb
-
 	cd /shares/compbio/PCTG/methylation/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/
 
-
 	module load bcftools/1.4.1
-
 	outdir="plink_format/"
-
 	for((i=1;i<=22;i++))
-
 	do
-
     ./plink2 --vcf $i".vcf.gz" --double-id  --id-delim '_' --keep-allele-order --make-bed --out $outdir"BSGS_imputed_chr"$i > $outdir"BSGS_chr"$i".log" 
-    
 	bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%INFO/AC\t%INFO/AN\t%INFO/RefPanelAF\t%INFO/INFO\n' $i".vcf.gz" > $outdir"BSGS_chr"$i".info"
-
 	done
 
 
@@ -715,8 +699,6 @@ Because their outputs have different names of the information in INFO column.
 
 #################### merge imputed chromosomes ##################
 
-merge
-
 vi the following file.
 
 ##CAUTION: no chr1 in this file.
@@ -749,9 +731,7 @@ allfiles.txt
 	BSGS_chr21.bed BSGS_chr21.bim BSGS_chr21.fam 
 	BSGS_chr22.bed BSGS_chr22.bim BSGS_chr22.fam 
 
-combine BSGS_chr1 with the ones in list
-
-BSGS_chr1.bed BSGS_chr1.bim	BSGS_chr1.fam 
+combine BSGS_chr1 with the ones in list with following script:
 
 	#!/bin/sh
 	#PBS -l walltime=48:00:00
@@ -760,9 +740,29 @@ BSGS_chr1.bed BSGS_chr1.bim	BSGS_chr1.fam
 	./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
 
 
+##################### Use GCTA to do GWAS ########################
 
+#some of my data have family structures, so picked gcta --mlma-loco to do the GWAS.
 
+#Generate the phenotype file first. It should have three columns: FID, IID, phenotype.
 
+Introduction from the GCTA webpage:
+
+"This option will implement an MLM based association analysis with the chromosome, on which the candidate SNP is located, excluded from calculating the GRM. We call it MLM leaving-one-chromosome-out (LOCO) analysis. The model is
+
+y = a + bx + g- + e
+
+where g- is the accumulated effect of all SNPs except those on the chromosome where the candidate SNP is located. The var(g-) will be re-estimated each time when a chromosome is excluded from calculating the GRM. The MLM-LOCO analysis is computationally less efficient but more powerful as compared with the MLM analysis including the candidate (--mlma).
+
+The results will be saved in the *.loco.mlma file."
+
+	#!/bin/sh
+	#PBS -l walltime=48:00:00
+	#PBS -l select=1:ncpus=16:mem=128gb
+	cd /home/tian.lin/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/GWAS
+	./gcta64 --bfile BSGS_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --pheno mean.beta.for.GWAS.txt  --out mean.beta.mlma
+
+:) Thanks to Allan. 
 
 
 
