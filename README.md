@@ -26,20 +26,20 @@ Always check with me before you use the imputed data to make sure I have updated
 The following steps should fit most SNP data, but there can be special situations come up. 
 
 0. define sample list. 
-1. recode to ATGC if original data was coded with 1234
-2. liftover to build 37 if in build 36 (this step can be omited because it can be done with the flip step, step6.
-3. get the subset of data of selected individuals
-4. pick the subset of chr1-23 if in original has 1-26. Only 1-23 can be imputed.
-5. quality control. Parameter can be different.
-6. flip the minus strand based on the strand information. Define which chip is the data from first.
+1. recode to ATGC if original data was coded with 1234.
+2. liftover to build 37 if in build 36 (this step can be omited because it can be done with the flip step, step6).
+3. get the subset of data of selected individuals.
+4. for imputation, pick the subset of chr1-23 if in original has 1-26. Only 1-23 can be imputed.
+5. quality control. Parameters can be different.
+6. flip the minus strand based on the strand information. First, find out which chip was used to generate the data.
 7. convert the SNPs identifiers if a lot of non rs IDs exist.
-8. separate the whole data into chromosomes if use Michigan imputation server.
-9. fix the ref allele if use the Sanger imputation server.
-10. zip the vcf file into vcf.gz
-11. submit to imputation
-12. download results, and transfer to plink format
-13. combine the chromosomes into one file if neccessary.
-14. Choose a proper software for GWAS
+8. separate the whole data into chromosomes and in vcf format if you will use Michigan imputation server.
+9. fix the ref allele in vcf formatted data if you will use the Sanger imputation server.
+10. zip the vcf file into vcf.gz.
+11. submit to imputation.
+12. download results, and transfer to plink format.
+13. combine the chromosomes into one file if neccessary. 
+14. Choose a proper method for GWAS. Watched out that the family information was lost when transferred to vcf format, so copy the original fam file here for an analysis based on family structure.
 
 
 ########################Quick search of Core Codes##################
@@ -72,7 +72,19 @@ The following steps should fit most SNP data, but there can be special situation
 
 	./plink --bfile idsed.fliped.QLD_MND  --exclude SNPs.in.hh.txt --chr 23 --recode vcf --out QLD_MND-chr23
 
-#more to add
+	for zipfile in *.zip; do /usr/bin/unzip -P 'password' $zipfile; done
+
+	bcftools +fixref $input -- -f $ref
+	bcftools +fixref $input -Oz -o $output -- -d -f $ref -m flip
+	bcftools +fixref $output -- -f $ref
+
+	./plink2 --vcf $i".vcf.gz" --double-id  --id-delim '_' --keep-allele-order --make-bed --out $outdir"BSGS_imputed_chr"$i > $outdir"BSGS_chr"$i".log" 
+
+	bcftools query -f '%CHROM\t%ID\t%POS\t%REF\t%ALT\t%INFO/AC\t%INFO/AN\t%INFO/RefPanelAF\t%INFO/INFO\n' $i".vcf.gz" > $outdir"BSGS_chr"$i".info"
+
+	./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
+
+	./gcta64 --bfile BSGS_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --pheno mean.beta.for.GWAS.txt  --out mean.beta.mlma
 
 
 ########################Important resourses#########################
