@@ -39,7 +39,7 @@ The following steps should fit most SNP data, but there can be special situation
 11. submit to imputation.
 12. download results, and transfer to plink format.
 13. combine the chromosomes into one file if neccessary. 
-14. Choose a proper method for GWAS. Watched out that the family information was lost when transferred to vcf format, so copy the original fam file here for an analysis based on family structure.
+14. Choose a proper method for GWAS. Watch out that the family information was lost when transferred to vcf format, so copy the original fam file here for an analysis based on family structure.
 
 
 ########################Quick search of Core Codes##################
@@ -129,7 +129,7 @@ qsub -l select=1:mem=8G -l walltime=12:00:00 -I -q interactive
 
 #better ask for the no-duplicate list too
 
-#make a copy and name the folder as COHORT_genotype
+#make a copy and name the folder as COHORT_genotype. Keep a copy as backup.
 
 ##if get the compressed data
 
@@ -138,6 +138,28 @@ for tar.gz files, use tar -xvf
 for .tar files, use tar -xvf
 
 for .gz files, use unzip
+
+########################look into the genotype data carefully####################
+
+how many SNPs in the bim file.
+
+how many individuals in the genotype data est. (belong to 666 families)
+
+how many individuals in the methylation data set.
+
+how many individuals in the information sheet
+
+#are genotype data overlap with methylation data set?
+
+how many of them are overlapped.
+
+how many extra in methylation data set.
+
+how many extra in genotyped data set.
+
+awk '{print $1}' COHORT_subset.bim | uniq -c | less
+
+Check how many families and whether there are multiple individuals in the same family.
 
 
 ########################recode to ATGC if using 1234################
@@ -162,38 +184,24 @@ This step can be skiped if a minus strand flip will be carried out with update_b
 
 http://genome.sph.umich.edu/wiki/LiftOver
 
-Lift PLINK format
-
-PLINK format usually referrs to .ped and .map files.
-
-
-Method 1
-
-We mainly use UCSC LiftOver binary tools to help lift over. We have a script liftMap.py, however, it is recommended to understand the job step by step:
-
-(1) Convert .map to .bed file
-
-By rearrange columns of .map file, we obtain a standard BED format file.
-
-(2) LiftOver .bed file
-
-Use method mentioned above to convert .bed file from one build to another.
-
-(3) Convert lifted .bed file back to .map file
-
-Rearrange column of .map file to obtain .bed file in the new build.
-
-(4) Modify .ped file
-
-.ped file have many column files. By convention, the first six columns are family_id, person_id, father_id, mother_id, sex, and phenotype. From the 7th column, there are two letters/digits representing a genotype at the certain marker. In step (2), as some genome positions cannot be lifted to the new version, we need to drop their corresponding columns from .ped file to keep consistency. You can use PLINK --exclude those snps, see Remove a subset of SNPs.
-
-(5) (optionally) change the rs number in the .map file
-
-Similar to the human reference build, dbSNP also have different versions. You may consider change rs number from the old dbSNP version to new dbSNP version depending on your needs. Such steps are described in Lift dbSNP rs numbers.
+	Lift PLINK format
+	PLINK format usually referrs to .ped and .map files.
+	Method 1
+	We mainly use UCSC LiftOver binary tools to help lift over. We have a script liftMap.py, however, it is recommended to understand the job step by step:
+	(1) Convert .map to .bed file
+	By rearrange columns of .map file, we obtain a standard BED format file.
+	(2) LiftOver .bed file
+	Use method mentioned above to convert .bed file from one build to another.
+	(3) Convert lifted .bed file back to .map file
+	Rearrange column of .map file to obtain .bed file in the new build.
+	(4) Modify .ped file
+	.ped file have many column files. By convention, the first six columns are family_id, person_id, father_id, mother_id, sex, and phenotype. From the 7th column, there are two letters/digits representing a genotype at the certain marker. In step (2), as some genome positions cannot be lifted to the new version, we need to drop their corresponding columns from .ped file to keep consistency. You can use PLINK --exclude those snps, see Remove a subset of SNPs.
+	(5) (optionally) change the rs number in the .map file
+	Similar to the human reference build, dbSNP also have different versions. You may consider change rs number from the old dbSNP version to new dbSNP version depending on your needs. Such steps are described in Lift dbSNP rs numbers.
 
 ##Liftover to build 37 (hg19) use python script liftmap.py
 
-##Download the three files:
+##First, Download the following three files:
 
 liftMap.py
 
@@ -201,9 +209,9 @@ hg18ToHg19.over.chain
 
 liftOver (a binary file that need to chmod u+x, and use it as ./liftOver)
 
+##find the following part and change the params['LIFTOVER_BIN'] and params['CHAIN']
 
 	vi liftMap.py
-	##find the following part and change the params['LIFTOVER_BIN'] and params['CHAIN']
 
 	params = dict()
     params['LIFTOVER_BIN'] = './liftOver'
@@ -212,8 +220,7 @@ liftOver (a binary file that need to chmod u+x, and use it as ./liftOver)
     params['NEW'] = fout
     params['UNLIFTED'] = fout + '.unlifted'
 
-##See how to use it 
-[tian]$ python liftMap.py 
+##See how to use it with: python liftMap.py 
 usage: liftMap.py [-h] -m MAPFILE [-p PEDFILE] [-d DATFILE] -o PREFIX
 
 liftMap.py: error: argument -m is required
@@ -247,33 +254,13 @@ LBCW1_recoded_lifted.map and LBCW1_recoded_lifted.ped are what we need.
 check how many SNPs in the unlifted file. In my file, all of them are shown as "#Deleted in new".
 
 
-:) Thanks to Yang.
+:) Thanks to Restdu.
 
-########################look into the genotype data carefully####################
 
-how many SNPs in the bim file.
-
-how many individuals in the genotype data est. (belong to 666 families)
-
-how many individuals in the methylation data set.
-
-how many individuals in the information sheet
-
-#are genotype data overlap with methylation data set?
-
-how many of them are overlapped.
-
-how many extra in methylation data set.
-
-how many extra in genotyped data set.
-
-awk '{print $1}' COHORT_subset.bim | uniq -c | less
-
-Check how many families and whether there are multiple individuals in the same family.
 
 ########################Get the subset of genotype##################
 
-Determine what samples to keep based on the methylation data.
+I determined what samples to keep based on the methylation data.
 #1. Use the ID and the matched family ID (which is the same of ID) in final.txt to form a table "genotype.IDs.txt".
 #2. check the chromosomes included in the genotype data
 #3. use plink to get the subset of genotype data.
@@ -283,7 +270,7 @@ Determine what samples to keep based on the methylation data.
 #how many samples in raw
 #how many samples to keep
 #how many SNPs input
-#how many SNPs kept
+#how many SNPs output
 
 ########################QC##########################################
 
@@ -291,29 +278,21 @@ Determine what samples to keep based on the methylation data.
 
 #make a record of variables and samples removed and kept.
 
-how many people input
-
-how many SNPs input
-
-how many people removed
-
-how many SNPs removed as missing
-
-how many SNPs removed due to hwe
-
-how many SNPs removed due to low MAF
-
-how many people kept
-
-how many SNPs kept
-
-Any other files than bam,bed,fam,log generated?
+	how many people input
+	how many SNPs input
+	how many people removed
+	how many SNPs removed as missing
+	how many SNPs removed due to hwe
+	how many SNPs removed due to low MAF
+	how many people kept
+	how many SNPs kept
+	Any other files than bam,bed,fam,log generated?
 
 plink.hh file:List of heterozygous haploid genotypes (SNPs/individuals)
 
 plink.irem	--mind	List of individuals removed for low genotyping
 
-########################flip the minus strand########################
+########################flip the minus strand using plink ########################
 
 ##Find the correct file for the chip used from the following webpage.
 
@@ -379,9 +358,9 @@ where:
 #do this step in local PC.
 #don't convert the kgp numbers to rs numbers before flip, because the strand file use the same identifiers as the original data.
 
-scp tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/mQTL_project/1_COHORT/COHORT_genotype/fliped.bim  /?/
+scp tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/mQTL_project/1_COHORT/COHORT_genotype/fliped.bim  .
 
-#use key_scripts/rsids.R to convert it, and output the converted bim, and a list of SNPs that were converted.
+#use rsids.R to convert it, and output the converted bim, and a list of SNPs that were converted.
 
 	R
 	bimname <- "flip_Tian_cleaned_PD.bim"
@@ -434,35 +413,22 @@ scp tian.lin@delta.imb.uq.edu.au:/shares/compbio/PCTG/methylation/mQTL_project/1
 
 ########################separate into vcf format on chromosomes#######
 
-##whole panel is available.
-
-HRC.r1.GRCh37.autosomes.mac5.sites.tab 
-
-39235158 lines in HRC panel
-
 ##softwares are available in modules in delta server. 
+
 	module avail 					
-
 	module load tabix/0.2.6		##for the function bgzip
-
 	module load vcftools/0.1.15 	##for the function vcf-sort
 
 	##files are separated based on chromosome.
-
 	for i in $(seq 1 22); do ./plink --bfile idsed.fliped.QLD_MND  --chr $i --recode vcf --out QLD_MND-chr$i; done
-
 	for i in $(seq 1 22); do vcf-sort QLD_MND-chr$i.vcf | bgzip -c > QLD_MND-chr$i.vcf.gz; done
 
-	##remove the SNPs in hh file for X chromosome
-
+	##remove the SNPs in hh file for X chromosome if a hh file was generated. otherwise the imputation will fail.
 	./plink --bfile idsed.fliped.QLD_MND  --exclude SNPs.in.hh.txt --chr 23 --recode vcf --out QLD_MND-chr23
 
 	##The X chromosome is denoted as 23 in the genotype file. but X in the reference panel.
-
 	##Remember to change 23 into X in the vcf file.
-
 	sed 's/23/X/' QLD_MND-chr23.vcf > QLD_MND-chrX.vcf
-
 	vcf-sort QLD_MND-chrX.vcf | bgzip -c > QLD_MND-chrX.vcf.gz
 
 ########################submit to imputation#########################
@@ -473,46 +439,38 @@ https://imputationserver.sph.umich.edu/
 
 #login and click Run
 
-#pick Parameters:
-
-Reference Panel: HRC r1.1 2016
-
-select file
-
-Phasing: Eagle v2.3 (phased output); ShapeIT for X chr
-
-Population (for QC only): ?
-
-Mode: Quality Control and Imputation
-
-click yes
-
-click yes
-
-click Start Imputation
+	#pick Parameters:
+	Reference Panel: HRC r1.1 2016
+	select file
+	Phasing: Eagle v2.3 (phased output); ShapeIT for X chr
+	Population (for QC only): ?
+	Mode: Quality Control and Imputation
+	click yes
+	click yes
+	click Start Imputation
 
 
 #CAUTION: choose ShapeIT v2.r790 (unphased) as the phasing tool, not the eagle v2.3. otherwise will fail
 #Maximum of jobs can be uploaded is 3.
 #Download the results with wget and save in COHORT_genotype/imputed/
 	use screens to do several at the same time.
-	tried with parallel and qsub, failed, always disconnect.
-
+	tried with parallel and qsub, failed, it always disconnects.
+#Always make a good record of the job ID and the what you imputed in that job. The password, which will be send to you by email, is specific for each job. You will need the password to extract the data from zipped files.
 
 :) Thanks to Yang, Beben, Allan, Jian.
 
 
 ###############################check the imputation results#########################
 
-##check the plot in qcreport.html
+##check the plot in qcreport.html. It should be a good linear plot, with some outliers.
 
 ##Useful code:
 
-/usr/bin/unzip 
+/usr/bin/unzip ##the default unzip in delta cluster did not work, always failed with "incorrect password".
 
-zless -S chr22.dose.vcf.gz 
+zless -S chr22.dose.vcf.gz ##you can see the vcf.gz file without extract it.
 
-vcftools --gzvcf input.vcf.gz --plink --out output
+vcftools --gzvcf input.vcf.gz --plink --out output ##it can change the vcf format to plink format.
 
 ##Release a group of files that share the same password at once.
 
@@ -526,9 +484,13 @@ vcftools --gzvcf input.vcf.gz --plink --out output
 
 #################Use bcftools to check and fix the switched allels##############
 
+##whole panel is available.
+
+HRC.r1-1.GRCh37.wgs.mac5.sites.tab
+
 This step is needed if use Sanger imputation server.
 
-Find the plugin is at /opt/Modules/bcftools/1.4.1/libexec/bcftools/. The two files in need are fixref.c and fixref.so. 
+In delta cluster, I found the plugin is at /opt/Modules/bcftools/1.4.1/libexec/bcftools/. The two files it needs are fixref.c and fixref.so. 
 
 qsub the following script. 
 
@@ -549,11 +511,11 @@ qsub the following script.
 	bcftools +fixref $input -Oz -o $output -- -d -f $ref -m flip
 	bcftools +fixref $output -- -f $ref
 
+The output is a fixed vcf.gz file, which can be submitted to imputation in Sanger Imputation Server.
+
 :) Thanks to Irfahan.
 
-########################sanger imputation service####################
-
-##another option:
+########################Sanger imputation service####################
 
 First step: registered a globus ID: lintian1986z@globusid.org
 
@@ -579,7 +541,7 @@ When globus send another email saying that the download is succeeded, go to the 
 
 ###############Check the preparation with the check script.###################
 
-cd /shares/compbio/PCTG/methylation/mQTL_project/4_PD/PD_genotype/
+Never tried this yet.
 
 Requires the unzipped tab delimited HRC reference (currently v1.1 HRC.r1-1.GRCh37.wgs.mac5.sites.tab) from the Haplotype Reference Consortium Website here:
 
@@ -587,18 +549,13 @@ Requires the unzipped tab delimited HRC reference (currently v1.1 HRC.r1-1.GRCh3
  
 Usage: perl HRC-1000G-check-bim-v4.2.pl -b <bim file> -f <Frequency file> -r HRC.r1-1.GRCh37.wgs.mac5.sites.tab -h
 
-Never tried this yet.
-
 Help page:
 http://www.well.ox.ac.uk/~wrayner/tools/#Checking
 
 
+####################### compare the sevice of Sanger vs Michigan ###########
 
-
-
-#######################compare Sanger vs Michigan ###########
-
-Michigan is easier in submit the job. Just need to apply an account and click on the webpage.
+Michigan is easier in submit the job. Just need to apply for an account and click buttons on the webpage.
 
 Sanger needs to install globus to submit the data.
 
@@ -612,11 +569,13 @@ Sanger output used as much rs IDs as possible. Only some "." and duplicate IDs n
 
 Michigan output all used chr:position as SNP ID.
 
-Both of their output are separated based on chromosomes.
+Both of their output are separated based on chromosomes. Need to be merge chromosomes together if use GCTA --mlma-loco
 
-Need to be merge chromosomes together if use GCTA --mlma-loco
+X chromosome can only be imputed with ShapeIT in Michigan.
 
+Eagle2 is available for chrX imputation in Sanger.
 
+#Caution: never submit the same chromosome from different cohort in the same job. The output will mass up.
 
 
 ###################### convert vcf.gz file to plink binary file ################
@@ -713,6 +672,8 @@ vi the following file.
 
 ##otherwise: Error: Line 1 of BSGS_chr2.bed has fewer tokens than expected.
 
+##If you didn't fix the ID with the last step, there will be error message with 3-allele SNPs and can't merge.
+
 allfiles.txt
 
 	BSGS_chr2.bed BSGS_chr2.bim BSGS_chr2.fam 
@@ -754,19 +715,19 @@ combine BSGS_chr1 with the ones in list with following script:
 
 Introduction from the GCTA webpage:
 
-"This option will implement an MLM based association analysis with the chromosome, on which the candidate SNP is located, excluded from calculating the GRM. We call it MLM leaving-one-chromosome-out (LOCO) analysis. The model is
+	"This option will implement an MLM based association analysis with the chromosome, on which the candidate SNP is located, excluded from calculating the GRM. We call it MLM leaving-one-chromosome-out (LOCO) analysis. The model is
+	y = a + bx + g- + e
+	where g- is the accumulated effect of all SNPs except those on the chromosome where the candidate SNP is located. The var(g-) will be re-estimated each time when a chromosome is excluded from calculating the GRM. The MLM-LOCO analysis is computationally less efficient but more powerful as compared with the MLM analysis including the candidate (--mlma).
+	The results will be saved in the *.loco.mlma file."
 
-y = a + bx + g- + e
-
-where g- is the accumulated effect of all SNPs except those on the chromosome where the candidate SNP is located. The var(g-) will be re-estimated each time when a chromosome is excluded from calculating the GRM. The MLM-LOCO analysis is computationally less efficient but more powerful as compared with the MLM analysis including the candidate (--mlma).
-
-The results will be saved in the *.loco.mlma file."
+## qsub the script:
 
 	#!/bin/sh
 	#PBS -l walltime=48:00:00
 	#PBS -l select=1:ncpus=16:mem=128gb
 	cd /home/tian.lin/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/GWAS
 	./gcta64 --bfile BSGS_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --pheno mean.beta.for.GWAS.txt  --out mean.beta.mlma
+
 
 :) Thanks to Allan. 
 
