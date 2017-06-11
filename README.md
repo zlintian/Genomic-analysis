@@ -707,6 +707,20 @@ combine BSGS_chr1 with the ones in list with following script:
 	./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
 
 
+################### Clean imputed genotype ################
+
+Merge the info score files (22 into 1).
+
+	for file in PD_chr*.info; do cat "$file" >> PD_info.txt; done
+	
+Fix the missing and replicate IDs using the same method as in fixing the IDs in bim file.
+Generate a vector of SNPs that have info score > 0.8. Saved as snps.0.8.txt.
+QC parameter: hwe: 0.000001; maf: 0.01; info score: 0.8.
+
+	./plink2 --bfile PD_imputed_renamed_autosomes_sexed --hwe 0.000001 --maf 0.01 --extract snps.0.8.txt --make-bed --out PD_imputed_cleaned_0.8
+
+
+
 ##################### Use GCTA to do GWAS ########################
 
 #some of my data have family structures, so picked gcta --mlma-loco to do the GWAS.
@@ -720,13 +734,13 @@ Introduction from the GCTA webpage:
 	where g- is the accumulated effect of all SNPs except those on the chromosome where the candidate SNP is located. The var(g-) will be re-estimated each time when a chromosome is excluded from calculating the GRM. The MLM-LOCO analysis is computationally less efficient but more powerful as compared with the MLM analysis including the candidate (--mlma).
 	The results will be saved in the *.loco.mlma file."
 
-## qsub the script:
-
+ qsub the script:
+ 
 	#!/bin/sh
 	#PBS -l walltime=48:00:00
 	#PBS -l select=1:ncpus=16:mem=128gb
 	cd /home/tian.lin/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/GWAS
-	./gcta64 --bfile BSGS_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --pheno mean.beta.for.GWAS.txt  --out mean.beta.mlma
+	./gcta64 --bfile cleaned_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --pheno phenotype.txt  --out phenotype.mlma
 
 
 :) Thanks to Allan. 
