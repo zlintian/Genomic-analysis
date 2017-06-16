@@ -1,0 +1,105 @@
+
+library(reshape2)
+library(ggplot2)
+getwd()
+setwd("../../6.IGP_MGREEN_METH_20170407/files_to_share_Jun6/")
+
+############### Figure 1: stacked bar plot ############
+
+# good for showing different composition in different 
+cc = read.table("/Users/tian.lin/Documents/mQTL_project1/6.IGP_MGREEN_METH_20170407/files_to_share_Jun6/cellcounts.txt", header=T, row.names=1)
+head(cc)
+nonneg.cc=cc
+nonneg.cc[(which(nonneg.cc<0))]=0
+head(nonneg.cc)
+
+nonneg.cc2 = data.frame(t(nonneg.cc))
+nonneg.cc2$row=row.names(nonneg.cc2)
+head(nonneg.cc2)
+nonneg.cc3 = melt(nonneg.cc2, id.vars = "row")
+head(nonneg.cc3)
+nonneg.cc3[nonneg.cc3[,3]<0,3] = 0
+
+#png("cc_stacked_bar.png")
+ggplot(nonneg.cc3, aes(x=variable, y=value, fill=row)) + 
+  geom_bar(stat="identity") +
+  xlab("\nType") +
+  ylab("Time\n") +
+  guides(fill=FALSE) +
+  theme_bw()
+#dev.off()
+
+
+############### Figure 2: parallel box plot ############
+
+cc = read.table("/Users/tian.lin/Documents/mQTL_project1/6.IGP_MGREEN_METH_20170407/files_to_share_Jun6/cellcounts.txt", header=T, row.names=1)
+samplesheet = read.table("/Users/tian.lin/Documents/mQTL_project1/6.IGP_MGREEN_METH_20170407/files_to_share_Jun6/samplesheet.txt")
+
+head(cc)
+cc[,8] = "unknow"
+cc[,8]= samplesheet[ match (row.names(cc), samplesheet[,1]),7]
+cc.subset = cc[cc$origin=="Blood" | cc$origin=="Left_over_Ficol_Prep" , ]
+nrow(cc.subset)
+y = melt(cc.subset, id.vars = "origin")
+head(y)
+#png("cc_distribution_boxplot.png")
+ggplot(y, aes(variable, value, col=origin)) + geom_boxplot() + xlab("cell type") + ylab("cell counts") + ggtitle ("distribution of cell counts in different sample origin")
+#dev.off()
+
+
+
+
+
+############### Figure 3: CMplot ############
+library(CMplot)
+
+##QQ
+CMplot(metal.p.cm[metal.p.cm$P>10e-15,],plot.type="q",conf.int=TRUE,conf.int.col="grey",file="jpg",dpi=300)
+
+##rectangular manhattan
+CMplot(pig60K[,c(1:3,6)],plot.type="m",threshold=NULL,file="jpg",dpi=300)
+
+##circular manhattan
+CMplot(metal.p.cm, type="c",chr.labels=paste("Chr",c(1:18,"X"),sep=""),threshold=c(0.05,0.01),
+       cir.chr.h=1,amplify=TRUE,threshold.lty=c(2,1),threshold.col=c("blue","red"),signal.line=1,
+       signal.col="red",file="jpg",dpi=300)
+
+##SNP density
+CMplot(metal.p.cm,plot.type="d",col=c("darkgreen", "yellow", "red"),file="jpg",dpi=300)
+
+
+
+################ Figure 4. Lined Distribution histgram ##########
+
+par(mfrow = c(5, 1))
+hist((bsgs.final[is.na(bsgs.final$mean_beta)==F,6]), xlim = c(0.43,0.55), ylim = c(0,300), xlab="mean.beta", main=paste("Histogram of BSGS cohort, meanage=21"))
+hist(pd.final[pd.final$phenotype=="PD",6], xlim = c(0.43,0.55), ylim = c(0,300), xlab="mean.beta", main=paste("Histogram of PD cohort cases, meanage=67"))
+hist(pd.final[pd.final$phenotype=="Control",6], xlim = c(0.43,0.55), ylim = c(0,300), xlab="mean.beta", main=paste("Histogram of PD cohort controls, meanage=67"))
+hist(lbc.final[1:513,6], xlim = c(0.43,0.55), ylim = c(0,300), xlab="mean.beta", main=paste("Histogram of LBC21 cohort, meanage=79"))
+hist(lbc.final[514:nrow(lbc.final),6], xlim = c(0.43,0.55), ylim = c(0,300), xlab="mean.beta", main=paste("Histogram of LBC36 cohort, meanage=70"))
+
+
+
+################ Figure 5. horizontal bar plot ##########
+
+
+
+
+
+
+
+
+################ Figure 6. PC plot ##########
+library(ggfortify)
+cc = read.table("/Users/tian.lin/Documents/mQTL_project1/6.IGP_MGREEN_METH_20170407/files_to_share_Jun6/cellcounts.txt", header=T, row.names=1)
+samplesheet = read.table("/Users/tian.lin/Documents/mQTL_project1/6.IGP_MGREEN_METH_20170407/files_to_share_Jun6/samplesheet.txt")
+
+head(cc)
+cc[,8] = "unknow"
+cc[,8]= samplesheet[ match (row.names(cc), samplesheet[,1]),7]
+
+png("PCs.cluster.plot.of.cc.png", width=960)
+autoplot(prcomp(cc[,1:7]), data = cc, colour = 'origin')
+dev.off()
+
+
