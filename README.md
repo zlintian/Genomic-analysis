@@ -37,9 +37,14 @@ The following steps should fit most SNP data, but there can be special situation
 9. fix the ref allele in vcf formatted data if you will use the Sanger imputation server.
 10. zip the vcf file into vcf.gz.
 11. submit to imputation.
-12. download results, and transfer to plink format.
-13. combine the chromosomes into one file if neccessary. 
-14. Choose a proper method for GWAS. Watch out that the family information was lost when transferred to vcf format, so copy the original fam file here for an analysis based on family structure.
+12. download results, release, and transfer to plink format.
+13. fix the missing and duplicate SNP IDs in bim file
+14. combine the chromosomes into one file if neccessary. 
+15. fix the sample ID in fam file. They may be kept as FID_IID when converted from vcf format.
+16. add sex to fam file.
+17. Watch out that the family information was lost when transferred to vcf format, so add those. CAUTION: order of individuals in the original fam file may be different with the imputed file. 
+17. QC and select with info score>0.8 (or other value).
+18. Choose a proper method for GWAS. 
 
 
 ########################Quick search of Core Codes##################
@@ -706,6 +711,12 @@ combine BSGS_chr1 with the ones in list with following script:
 	cd /home/tian.lin/mQTL_project/Imputed_data/1_BSGS/GWAS/plink_format
 	./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
 
+################### fix the fam file ##################
+check individual ID.
+
+add sex.
+
+add family information.
 
 ################### Clean imputed genotype ################
 
