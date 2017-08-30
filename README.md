@@ -712,11 +712,26 @@ combine BSGS_chr1 with the ones in list with following script:
 	./plink2 --bfile BSGS_chr1 --merge-list allfiles.txt --make-bed --out BSGS_imputed_autosomes
 
 ################### fix the fam file ##################
+
 check individual ID.
 
-add sex.
+#The individul IDs was merged to FID_IID when converting plink file to vcf file before imputation. When we convert vcf file to plink format after imputation, using the opition --id-delim '_' can split the ID back to FID and IID. Since many IDs in the cohorts have already included _, this option is not available. We have to fix the ID in the fam file afterwardly. The following R code can fix the ID and also add sex and phenotype information into fam file. Replace the fam file with the corrected.fam.
 
-add family information.
+	R
+	fam = read.table("CHN_MND_imputed_autosomes.fam")
+	ori = read.table("Tian_cleaned_CHN_MND_without_ATGC.fam")
+	match = read.table("famID.match.txt")
+	fam[,7]=fam[,2]
+
+	fam[,1] = match[match(fam[,7], match[,1]),2]
+	fam[,2] = match[match(fam[,7], match[,1]),3]
+	fam[,5] = ori[match(fam[,2], ori[,2]),5]
+	fam[,6] = ori[match(fam[,2], ori[,2]),6]
+	head(fam)
+
+	write.table(fam, file = "match.fam.files.txt", quote=F, sep="\t", row.names=F, col.names=F)
+	write.table(fam[,1:6], file = "corrected.fam", quote=F, sep="\t", row.names=F, col.names=F)
+
 
 ################### Clean imputed genotype ################
 
@@ -745,14 +760,19 @@ Introduction from the GCTA webpage:
 	where g- is the accumulated effect of all SNPs except those on the chromosome where the candidate SNP is located. The var(g-) will be re-estimated each time when a chromosome is excluded from calculating the GRM. The MLM-LOCO analysis is computationally less efficient but more powerful as compared with the MLM analysis including the candidate (--mlma).
 	The results will be saved in the *.loco.mlma file."
 
+use --qcovar to include quantitative covariates and --covar to include discrete covariates.
+
+
  qsub the script:
  
 	#!/bin/sh
 	#PBS -l walltime=48:00:00
 	#PBS -l select=1:ncpus=16:mem=128gb
 	cd /home/tian.lin/mQTL_project/Sanger_imputed/BSGSautosome.vcfs/GWAS
-	./gcta64 --bfile cleaned_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --pheno phenotype.txt  --out phenotype.mlma
+	./gcta64 --bfile cleaned_imputed_autosomes --mlma-loco  --maf 0.01 --thread-num 16 --qcovar qcovar_age.txt --covar covar_sex.txt  --pheno phenotype.txt  --out phenotype.mlma
 
+
+	
 
 :) Thanks to Allan. 
 
