@@ -666,6 +666,7 @@ Because their outputs have different names of the information in INFO column.
 
 :) Thanks to Yang!
 
+##CAUTION: remember to update the info score file using this script too. Check the columns in the info score file and apply this script accordingly.
 
 #################### merge imputed chromosomes ##################
 
